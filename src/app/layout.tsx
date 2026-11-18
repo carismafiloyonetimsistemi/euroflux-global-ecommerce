@@ -1,30 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "EUROFLUX Global | Avrupa & Amerika Orijinal Niş Kozmetik ve Şeffaf Kargo Üssü",
+  title: "Avrupadan Kargom | Dünyadan Güzellik Keşifleri & Advent Takvimleri",
   description:
-    "Sephora Paris, Space NK London ve KaDeWe Berlin çıkışlı, %100 gümrük vergisi garantili (ETGB/DDP), canlı uçuş ve batch kodu takipli yeni nesil e-ticaret platformu.",
+    "Armani Advent Calendar, Space NK, Charlotte Tilbury, Rhode, Patrick Ta ve dünyaca ünlü kozmetik markaları güvenli ödeme ve şeffaf kargo takibiyle kapınızda.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="tr" className={`${dmSans.variable} h-full antialiased`}>
+      <body
+        style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
+        className="min-h-full flex flex-col bg-white text-[#563C49]"
+      >
+        {children}
+      </body>
     </html>
   );
 }

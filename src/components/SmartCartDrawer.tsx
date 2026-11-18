@@ -6,20 +6,16 @@ import {
   Trash2,
   Plus,
   Minus,
-  ShieldCheck,
-  Plane,
   Lock,
   CheckCircle2,
-  CreditCard,
-  Sparkles,
-  FileText,
-  ArrowRight,
+  ShoppingBag,
 } from "lucide-react";
 import {
   Product,
   ProductVariant,
   calculateTransparentPricing,
   OrderRecord,
+  formatTL,
 } from "@/lib/mock-data";
 
 export interface CartItem {
@@ -49,11 +45,11 @@ export default function SmartCartDrawer({
 }: SmartCartDrawerProps) {
   const [step, setStep] = useState<"CART" | "CHECKOUT" | "SUCCESS">("CART");
   const [paymentProvider, setPaymentProvider] = useState<"IYZICO" | "PAYTR">("IYZICO");
-  const [fullName, setFullName] = useState("Selin Yılmaz");
-  const [email, setEmail] = useState("selin.yilmaz@example.com");
+  const [fullName, setFullName] = useState("Ceren Bulut");
+  const [email, setEmail] = useState("ceren.bulut@example.com");
   const [phone, setPhone] = useState("+90 532 418 92 10");
   const [tcIdentity, setTcIdentity] = useState("24891048914");
-  const [city, setCity] = useState("İstanbul / Beşiktaş");
+  const [city, setCity] = useState("İstanbul / Nişantaşı");
   const [isProcessing, setIsProcessing] = useState(false);
   const [createdOrder, setCreatedOrder] = useState<OrderRecord | null>(null);
 
@@ -90,25 +86,25 @@ export default function SmartCartDrawer({
 
       const newOrder: OrderRecord = {
         id: `ord-${Date.now()}`,
-        orderNumber: data.orderNumber || `EU-${Math.floor(10000 + Math.random() * 89999)}`,
+        orderNumber: data.orderNumber ? data.orderNumber.replace("EU-", "AVK-") : `AVK-${Math.floor(10000 + Math.random() * 89999)}`,
         customerName: fullName,
         customerEmail: email,
         customerPhone: phone,
         customerCity: city,
         tcIdentityMasked: `${tcIdentity.slice(0, 3)}*****${tcIdentity.slice(-3)}`,
         currentStage: "EU_WAREHOUSE",
-        createdAt: "Şimdi (Canlı Sipariş)",
-        guaranteedDeliveryDate: "4-6 İş Günü (SLA Garantili)",
-        etgbDeclarationNo: data.etgbDeclarationNo || "ETGB-2026-IST-994120",
-        airWaybillNo: data.airWaybillNo || "LH-7481-BER-IST",
-        originHub: "Berlin Brandenburg Lojistik Merkezi (DE)",
+        createdAt: "Bugün",
+        guaranteedDeliveryDate: "7-10 İş Günü",
+        etgbDeclarationNo: data.etgbDeclarationNo || "ETGB-2026-994120",
+        airWaybillNo: data.airWaybillNo || "TK-1724-PAR-IST",
+        originHub: "Avrupa Transfer Merkezi",
         batchVerified: true,
-        receiptHash: `SEP-EU-INV-${Math.floor(100000 + Math.random() * 899999)}`,
+        receiptHash: `AVK-INV-${Math.floor(10000 + Math.random() * 89999)}`,
         pricing: {
           subtotalTry: pricing.subtotalTry,
           euLogisticsFeeTry: pricing.euLogisticsFeeTry,
-          customsTaxTry: pricing.customsTaxTry,
-          vipInsuranceTry: pricing.vipInsuranceTry,
+          customsTaxTry: 0,
+          vipInsuranceTry: 0,
           totalTry: pricing.totalTry,
         },
         items: items.map((it) => ({
@@ -124,79 +120,73 @@ export default function SmartCartDrawer({
         timeline: [
           {
             stage: "ORDER_CONFIRMED",
-            title: `Sipariş & ${paymentProvider} 3D Secure Ödeme Onaylandı`,
-            subtitle: "ETGB Gümrük Vergisi Koruması Aktif",
-            description:
-              "Siparişiniz onaylandı ve gümrük vergileri peşin ödenerek kur koruması altına alındı.",
-            location: `${city} / Dijital Gümrük Kaydı`,
-            timestamp: "Az Önce",
-            operatorName: `${paymentProvider} Güvenli Ödeme Servisi`,
-            badgeCode: "FIN-OK",
+            title: "Siparişiniz Onaylandı",
+            subtitle: `${paymentProvider} Güvenli Ödeme`,
+            description: "Siparişiniz alındı ve Avrupa tedarik ekibimize iletildi.",
+            location: city,
+            timestamp: "Şimdi",
+            operatorName: "Avrupadan Kargom",
+            badgeCode: "ONAYLANDI",
           },
           {
             stage: "EU_WAREHOUSE",
-            title: "Avrupa Deposunda (Berlin Hub) Kalite & Batch Doğrulama",
-            subtitle: "Orijinal Mağaza Fişi ve Barkod Eşleşmesi Başlatıldı",
-            description:
-              "Ürünleriniz Berlin depomuzda darbe emici termal pakete alınıyor.",
-            location: "Berlin Brandenburg Hub, Almanya 🇩🇪",
-            timestamp: "Şu Anda İşleniyor",
-            operatorName: "Depo Denetçisi: Lukas Meyer",
-            badgeCode: "BATCH-VERIFIED",
-            telemetry: {
-              batchCode: items[0]?.product.authenticityBatch || "EU-BATCH-2026",
-              tempSensor: "18.1°C Termal Kabin",
-            },
+            title: "Avrupa Deposunda Hazırlanıyor",
+            subtitle: "Kalite Kontrol & Paketleme",
+            description: "Ürünleriniz özenle kontrol edilerek uçuş için paketleniyor.",
+            location: "Avrupa Lojistik Merkezi",
+            timestamp: "İşleniyor",
+            operatorName: "Tedarik Ekibi",
+            badgeCode: "AVRUPA DEPO",
           },
           {
             stage: "EXPORT_CUSTOMS",
-            title: "Gümrük İşleminde (AB İhracat)",
-            subtitle: "Havalimanı Çıkış Manifestosu",
-            description: "AB ihracat gümrük onayı.",
-            location: "Berlin BER Cargo",
-            timestamp: "Sıradaki Aşama",
-            operatorName: "Zollamt Berlin",
-            badgeCode: "EU-EXPORT",
+            title: "Gümrük İşleminde",
+            subtitle: "Avrupa Çıkış İşlemleri",
+            description: "Havalimanı gümrük çıkış onayı.",
+            location: "Avrupa Çıkış",
+            timestamp: "Sıradaki Adım",
+            operatorName: "Gümrük Ekibi",
+            badgeCode: "GÜMRÜK",
           },
           {
             stage: "IN_FLIGHT_TRANSIT",
             title: "Uçuşta / Transit",
-            subtitle: "Berlin -> İstanbul Hava Kargo",
+            subtitle: "Türkiye'ye Transfer",
             description: "Hava kargo uçuş aşaması.",
-            location: "Hava Sahası",
+            location: "Uçuşta",
             timestamp: "Planlanan",
-            operatorName: "Turkish Cargo / Lufthansa",
-            badgeCode: "AIR-TRANSIT",
+            operatorName: "Hava Kargo",
+            badgeCode: "UÇUŞTA",
           },
           {
             stage: "TR_CUSTOMS_HUB",
             title: "Türkiye Transfer Merkezinde",
-            subtitle: "İstanbul Havalimanı ETGB Çıkışı",
-            description: "Ek vergisiz hızlı ETGB çekimi.",
-            location: "İstanbul Havalimanı (IST)",
+            subtitle: "İstanbul Dağıtım Merkezi",
+            description: "Yurtiçi kurye aktarım merkezi.",
+            location: "İstanbul",
             timestamp: "Planlanan",
-            operatorName: "TR Gümrük Masası",
-            badgeCode: "TR-HUB",
+            operatorName: "TR Operasyon",
+            badgeCode: "TR MERKEZ",
           },
           {
             stage: "OUT_FOR_DELIVERY",
-            title: "VIP Kuryede",
-            subtitle: "Son Mil Teslimat",
-            description: "Adresinize kurye dağıtımı.",
+            title: "Kuryede",
+            subtitle: "Adrese Teslimat",
+            description: "Dağıtım aşaması.",
             location: city,
             timestamp: "Planlanan",
-            operatorName: "VIP Kurye",
-            badgeCode: "LAST-MILE",
+            operatorName: "Kurye",
+            badgeCode: "KURYEDE",
           },
           {
             stage: "DELIVERED",
             title: "Teslim Edildi",
-            subtitle: "İmzalı Teslimat",
-            description: "Orijinallik sertifikalı teslimat.",
+            subtitle: "Teslimat",
+            description: "Siparişiniz teslim edildi.",
             location: city,
-            timestamp: "SLA Garantili",
-            operatorName: "Müşteri Onayı",
-            badgeCode: "SLA-DONE",
+            timestamp: "Planlanan",
+            operatorName: "Alıcı",
+            badgeCode: "TESLİM",
           },
         ],
       };
@@ -211,19 +201,16 @@ export default function SmartCartDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/75 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-white text-slate-900 h-full flex flex-col shadow-2xl">
-        {/* Üst Başlık */}
-        <div className="p-5 bg-slate-950 text-white flex items-center justify-between border-b border-slate-800">
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              %100 Gümrük & Orijinallik Garantili Sepet
-            </div>
-            <h3 className="text-lg font-bold">
-              {step === "CART" && `Akıllı Sepet & Vergi Şeffaflığı (${items.length})`}
-              {step === "CHECKOUT" && "ETGB Gümrük Beyanı & Güvenli Ödeme"}
-              {step === "SUCCESS" && "Siparişiniz & ETGB Dosyanız Oluşturuldu!"}
+    <div className="fixed inset-0 z-50 flex justify-end bg-[#563C49]/40 backdrop-blur-xs">
+      <div className="w-full max-w-md bg-white text-[#563C49] h-full flex flex-col shadow-2xl">
+        {/* Başlık */}
+        <div className="px-6 py-5 flex items-center justify-between border-b border-[#563C49]/10">
+          <div className="flex items-center gap-2.5">
+            <ShoppingBag className="w-5 h-5 text-[#563C49]" />
+            <h3 className="text-lg font-medium text-[#563C49]">
+              {step === "CART" && `Sepetim (${items.length})`}
+              {step === "CHECKOUT" && "Teslimat & Güvenli Ödeme"}
+              {step === "SUCCESS" && "Siparişiniz Alındı"}
             </h3>
           </div>
           <button
@@ -232,98 +219,98 @@ export default function SmartCartDrawer({
               setStep("CART");
               onClose();
             }}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
+            className="w-9 h-9 rounded-full bg-[#563C49]/[0.06] hover:bg-[#563C49]/15 flex items-center justify-center text-[#563C49] transition cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Ücretsiz Hava Kargo İlerleme Barı */}
+        {/* 5000₺ ve üzeri ücretsiz kargo barı */}
         {step !== "SUCCESS" && (
-          <div className="px-5 py-3 bg-indigo-50 border-b border-indigo-100">
-            <div className="flex items-center justify-between text-xs font-semibold text-indigo-950 mb-1.5">
-              <span className="flex items-center gap-1.5">
-                <Plane className="w-4 h-4 text-indigo-600" />
-                {remainingForFreeShipping === 0
-                  ? "Tebrikler! Avrupa VIP Hava Kargo Ücretsiz!"
-                  : `Ücretsiz Avrupa Hava Kargo için ${remainingForFreeShipping.toLocaleString("tr-TR")} ₺ kaldı`}
-              </span>
-              <span>{Math.min(100, Math.round((subtotalTry / 5000) * 100))}%</span>
+          <div className="px-6 py-3 bg-[#F9F8F6] border-b border-[#563C49]/10">
+            <div className="text-xs text-[#563C49] mb-1.5">
+              {remainingForFreeShipping === 0 ? (
+                <span className="font-medium text-[#438E44]">
+                  ✓ 5000₺ ve üzeri ücretsiz kargo hakkı kazandınız!
+                </span>
+              ) : (
+                <span>
+                  Ücretsiz kargo için sepetinize{" "}
+                  <strong>{formatTL(remainingForFreeShipping)}</strong> daha ürün ekleyin.
+                </span>
+              )}
             </div>
-            <div className="w-full h-2 rounded-full bg-indigo-200 overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-[#563C49]/10 overflow-hidden">
               <div
-                className="h-full bg-indigo-600 transition-all duration-300"
+                className="h-full bg-[#563C49] transition-all duration-300"
                 style={{ width: `${Math.min(100, (subtotalTry / 5000) * 100)}%` }}
               />
             </div>
           </div>
         )}
 
-        {/* İçerik Alanı */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        {/* İçerik */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {step === "CART" && (
             <>
               {items.length === 0 ? (
                 <div className="text-center py-16">
-                  <Plane className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <h4 className="text-base font-bold text-slate-800">
-                    Sepetinizde henüz ürün bulunmuyor
+                  <ShoppingBag className="w-10 h-10 text-[#563C49]/30 mx-auto mb-3" />
+                  <h4 className="text-base font-medium text-[#563C49]">
+                    Sepetiniz şu an boş
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-                    Avrupa depolarımızda hazır bulunan Rhode, Space NK, Rare Beauty veya P.Louise ürünlerini hemen ekleyebilirsiniz.
+                  <p className="text-xs text-[#563C49]/65 mt-1">
+                    Favori markalarınızı ve Advent takvimlerini keşfetmeye başlayın.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {items.map((item) => {
                     const unitPrice = item.product.priceTry + item.variant.priceDiffTry;
                     return (
                       <div
                         key={item.product.id + item.variant.id}
-                        className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/70 flex gap-3.5"
+                        className="p-3.5 rounded-[16px] border border-[#563C49]/10 bg-white flex gap-3.5"
                       >
                         <img
                           src={item.product.image}
                           alt={item.product.name}
-                          className="w-20 h-20 rounded-xl object-cover border border-slate-200"
+                          className="w-20 h-20 rounded-[12px] object-cover bg-[#F9F8F6]"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-indigo-600">
-                              {item.product.originFlag} {item.product.brand}
+                            <span className="text-[11px] uppercase tracking-wider text-[#563C49]/65">
+                              {item.product.brand}
                             </span>
                             <button
                               type="button"
                               onClick={() =>
                                 onRemoveItem(item.product.id, item.variant.id)
                               }
-                              className="text-slate-400 hover:text-rose-600 cursor-pointer"
+                              className="text-[#563C49]/40 hover:text-[#EB001B] cursor-pointer"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <h4 className="text-sm font-bold text-slate-900 truncate">
+                          <h4 className="text-sm font-medium text-[#563C49] truncate">
                             {item.product.name}
                           </h4>
-                          <div className="text-xs text-slate-500 mt-0.5">
-                            Seçim: <span className="font-semibold text-slate-700">{item.variant.name}</span>
-                          </div>
-                          <div className="text-[11px] text-emerald-700 font-mono mt-0.5">
-                            ✓ {item.product.sourceStore} • Batch: {item.product.authenticityBatch}
+                          <div className="text-xs text-[#563C49]/65 mt-0.5">
+                            {item.variant.name}
                           </div>
 
                           <div className="flex items-center justify-between mt-3">
-                            <div className="inline-flex items-center rounded-lg border border-slate-300 bg-white">
+                            <div className="inline-flex items-center rounded-[30px] border border-[#563C49]/15 px-1">
                               <button
                                 type="button"
                                 onClick={() =>
                                   onUpdateQuantity(item.product.id, item.variant.id, -1)
                                 }
-                                className="p-1.5 text-slate-600 hover:text-slate-900 cursor-pointer"
+                                className="p-1.5 text-[#563C49]/70 hover:text-[#563C49] cursor-pointer"
                               >
-                                <Minus className="w-3.5 h-3.5" />
+                                <Minus className="w-3 h-3" />
                               </button>
-                              <span className="px-2.5 text-xs font-bold">
+                              <span className="px-2.5 text-xs font-medium">
                                 {item.quantity}
                               </span>
                               <button
@@ -331,13 +318,13 @@ export default function SmartCartDrawer({
                                 onClick={() =>
                                   onUpdateQuantity(item.product.id, item.variant.id, 1)
                                 }
-                                className="p-1.5 text-slate-600 hover:text-slate-900 cursor-pointer"
+                                className="p-1.5 text-[#563C49]/70 hover:text-[#563C49] cursor-pointer"
                               >
-                                <Plus className="w-3.5 h-3.5" />
+                                <Plus className="w-3 h-3" />
                               </button>
                             </div>
-                            <span className="text-sm font-bold text-slate-900">
-                              {(unitPrice * item.quantity).toLocaleString("tr-TR")} ₺
+                            <span className="text-sm font-medium text-[#563C49]">
+                              {formatTL(unitPrice * item.quantity)}
                             </span>
                           </div>
                         </div>
@@ -351,32 +338,35 @@ export default function SmartCartDrawer({
 
           {step === "CHECKOUT" && (
             <form id="checkout-form" onSubmit={handleCheckoutSubmit} className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
-                <div className="font-bold flex items-center gap-1.5 mb-1">
-                  <FileText className="w-4 h-4 text-emerald-600" />
-                  Neden T.C. Kimlik Numarası İstiyoruz?
-                </div>
-                Türkiye Gümrük Yönetmeliği gereği hava kargo ile gelen paketlerin{" "}
-                <strong>ETGB (Elektronik Ticaret Gümrük Beyannamesi)</strong> işlemlerini sizin adınıza vergisi ödenmiş olarak tamamlamamız için zorunludur.
-              </div>
-
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Adınız Soyadınız
+                <label className="block text-xs font-medium text-[#563C49] mb-1">
+                  Ad Soyad
                 </label>
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
+                  className="w-full px-4 py-2.5 rounded-[30px] border border-[#563C49]/20 text-sm focus:outline-none focus:border-[#563C49]"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    T.C. Kimlik No (ETGB Beyanı)
+                  <label className="block text-xs font-medium text-[#563C49] mb-1">
+                    Telefon
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-[30px] border border-[#563C49]/20 text-sm focus:outline-none focus:border-[#563C49]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#563C49] mb-1">
+                    T.C. Kimlik No (Gümrük İçin)
                   </label>
                   <input
                     type="text"
@@ -385,89 +375,72 @@ export default function SmartCartDrawer({
                     minLength={11}
                     value={tcIdentity}
                     onChange={(e) => setTcIdentity(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Telefon (Canlı Kargo SMS)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
+                    className="w-full px-4 py-2.5 rounded-[30px] border border-[#563C49]/20 text-sm focus:outline-none focus:border-[#563C49]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    E-Posta (Mağaza Faturası)
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    İl / İlçe
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Ödeme Altyapısı Seçimi: İyzico vs PayTR */}
-              <div className="pt-2">
-                <label className="block text-xs font-bold text-slate-700 mb-2">
-                  Ödeme Servis Katmanı Seçimi (3D Secure & Alıcı Koruması)
+              <div>
+                <label className="block text-xs font-medium text-[#563C49] mb-1">
+                  E-Posta
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-[30px] border border-[#563C49]/20 text-sm focus:outline-none focus:border-[#563C49]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#563C49] mb-1">
+                  Teslimat Adresi (İl / İlçe)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-[30px] border border-[#563C49]/20 text-sm focus:outline-none focus:border-[#563C49]"
+                />
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-xs font-medium text-[#563C49] mb-2">
+                  Ödeme Yöntemi
+                </label>
+                <div className="grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     onClick={() => setPaymentProvider("IYZICO")}
-                    className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                    className={`p-3 rounded-[16px] border text-left transition cursor-pointer ${
                       paymentProvider === "IYZICO"
-                        ? "border-indigo-600 bg-indigo-50/70"
-                        : "border-slate-200 hover:border-slate-300"
+                        ? "border-[#563C49] bg-[#563C49]/[0.06]"
+                        : "border-[#563C49]/15"
                     }`}
                   >
-                    <div className="text-xs font-bold text-indigo-950 flex items-center justify-between">
-                      <span>iyzico Korumalı Ödeme</span>
-                      <CreditCard className="w-4 h-4 text-indigo-600" />
+                    <div className="text-xs font-medium text-[#563C49]">
+                      iyzico Güvencesi
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-1">
-                      3 Taksit & Teslimata Kadar Bloke Güvencesi
+                    <div className="text-[11px] text-[#563C49]/65 mt-0.5">
+                      Kredi / Banka Kartı
                     </div>
                   </button>
-
                   <button
                     type="button"
                     onClick={() => setPaymentProvider("PAYTR")}
-                    className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                    className={`p-3 rounded-[16px] border text-left transition cursor-pointer ${
                       paymentProvider === "PAYTR"
-                        ? "border-indigo-600 bg-indigo-50/70"
-                        : "border-slate-200 hover:border-slate-300"
+                        ? "border-[#563C49] bg-[#563C49]/[0.06]"
+                        : "border-[#563C49]/15"
                     }`}
                   >
-                    <div className="text-xs font-bold text-indigo-950 flex items-center justify-between">
-                      <span>PayTR 3D Secure</span>
-                      <Lock className="w-4 h-4 text-indigo-600" />
+                    <div className="text-xs font-medium text-[#563C49]">
+                      PayTR / G Pay
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-1">
-                      Tüm Kartlara Hızlı Onay & Sıfır Komisyon
+                    <div className="text-[11px] text-[#563C49]/65 mt-0.5">
+                      3D Secure Hızlı Ödeme
                     </div>
                   </button>
                 </div>
@@ -476,112 +449,81 @@ export default function SmartCartDrawer({
           )}
 
           {step === "SUCCESS" && createdOrder && (
-            <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-lg">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="p-6 rounded-[20px] bg-[#F9F8F6] border border-[#563C49]/10 text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-[#438E44] text-white flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                  {paymentProvider} 3D SECURE ONAYLANDI
-                </span>
-                <h4 className="text-xl font-extrabold text-slate-900 mt-1">
-                  Sipariş No: #{createdOrder.orderNumber}
+                <h4 className="text-lg font-medium text-[#563C49]">
+                  Teşekkürler, Siparişiniz Alındı!
                 </h4>
-                <p className="text-xs text-slate-600 mt-1">
-                  Siparişiniz Berlin Lojistik Merkezimize iletildi ve canlı takip radarında en üst sıraya eklendi!
+                <p className="text-xs text-[#563C49]/70 mt-1">
+                  Sipariş Numaranız: <strong>#{createdOrder.orderNumber}</strong>
                 </p>
               </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-emerald-200 text-left text-xs space-y-1.5">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">ETGB Gümrük Beyan No:</span>
-                  <span className="font-mono font-bold text-emerald-700">
-                    {createdOrder.etgbDeclarationNo}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Hava Kargo AWB No:</span>
-                  <span className="font-mono font-bold text-indigo-700">
-                    {createdOrder.airWaybillNo}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Ödenen Net Tutar (Vergi Dahil):</span>
-                  <span className="font-bold text-slate-900">
-                    {createdOrder.pricing.totalTry.toLocaleString("tr-TR")} ₺
-                  </span>
-                </div>
-              </div>
-
               <button
                 type="button"
                 onClick={() => {
                   setStep("CART");
                   onClose();
                 }}
-                className="w-full py-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-sm transition cursor-pointer"
+                className="w-full py-3 rounded-[30px] bg-[#563C49] hover:bg-[#9F8291] text-white font-medium text-sm transition cursor-pointer"
               >
-                Canlı Sipariş Takip Panelinde Görüntüle
+                Canlı Sipariş Takibini Görüntüle
               </button>
             </div>
           )}
         </div>
 
-        {/* Alt Şeffaf Fiyat & Vergi Kırılımı Özeti */}
+        {/* Alt Toplam */}
         {items.length > 0 && step !== "SUCCESS" && (
-          <div className="p-5 bg-slate-50 border-t border-slate-200 space-y-4">
+          <div className="p-6 bg-[#F9F8F6] border-t border-[#563C49]/10 space-y-4">
             <div className="space-y-1.5 text-xs">
-              <div className="flex justify-between text-slate-600">
-                <span>Avrupa Resmi Mağaza Ara Toplamı</span>
-                <span className="font-semibold text-slate-900">
-                  {pricing.subtotalTry.toLocaleString("tr-TR")} ₺
+              <div className="flex justify-between text-[#563C49]/75">
+                <span>Ara Toplam</span>
+                <span>{formatTL(pricing.subtotalTry)}</span>
+              </div>
+              <div className="flex justify-between text-[#563C49]/75">
+                <span>Kargo</span>
+                <span>
+                  {pricing.euLogisticsFeeTry === 0
+                    ? "Ücretsiz"
+                    : formatTL(pricing.euLogisticsFeeTry)}
                 </span>
               </div>
-              <div className="flex justify-between text-slate-600">
-                <span>Avrupa Hava Kargo Lojistik (Berlin/Paris &rarr; İST)</span>
-                <span className="font-semibold text-slate-900">
-                  {pricing.euLogisticsFeeTry === 0 ? (
-                    <span className="text-emerald-600 font-bold">ÜCRETSİZ</span>
-                  ) : (
-                    `${pricing.euLogisticsFeeTry.toLocaleString("tr-TR")} ₺`
-                  )}
-                </span>
+              <div className="flex justify-between text-[#438E44]">
+                <span>Gümrük & İthalat Vergisi</span>
+                <span>Fiyata Dahil (0TL)</span>
               </div>
-              <div className="flex justify-between text-emerald-700 font-medium">
-                <span className="flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Peşin Ödenmiş ETGB Gümrük & İthalat Vergisi
-                </span>
-                <span>{pricing.customsTaxTry.toLocaleString("tr-TR")} ₺</span>
+              <div className="flex justify-between text-base font-medium text-[#563C49] pt-2 border-t border-[#563C49]/10">
+                <span>Toplam</span>
+                <span>{formatTL(pricing.totalTry)}</span>
               </div>
-              <div className="flex justify-between text-slate-600">
-                <span>Termal Soğuk Zincir & Kırılmazlık Sigortası</span>
-                <span>{pricing.vipInsuranceTry.toLocaleString("tr-TR")} ₺</span>
-              </div>
-              <div className="flex justify-between text-base font-extrabold text-slate-950 pt-2 border-t border-slate-200">
-                <span>Kapıya Teslim Net Toplam</span>
-                <span>{pricing.totalTry.toLocaleString("tr-TR")} ₺</span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                * Kapıda veya gümrükte 1 TL dahi ek ücret çıkmaz. Tüm vergiler peşin ödenmiştir.
-              </p>
             </div>
 
             {step === "CART" ? (
-              <button
-                type="button"
-                onClick={() => setStep("CHECKOUT")}
-                className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-indigo-600/20"
-              >
-                ETGB Gümrük Garantili Ödemeye Geç
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setStep("CHECKOUT")}
+                  className="w-full py-3.5 rounded-[30px] bg-[#563C49] hover:bg-[#9F8291] text-white font-medium text-sm transition cursor-pointer"
+                >
+                  ÖDEMEYE GEÇ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep("CHECKOUT")}
+                  className="w-full py-3 rounded-[30px] bg-black hover:bg-neutral-800 text-white font-medium text-sm transition cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>G Pay ile Satın Al</span>
+                </button>
+              </div>
             ) : (
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setStep("CART")}
-                  className="px-4 py-3.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 cursor-pointer"
+                  className="px-5 py-3 rounded-[30px] border border-[#563C49]/20 text-xs font-medium text-[#563C49] cursor-pointer"
                 >
                   Geri
                 </button>
@@ -589,12 +531,12 @@ export default function SmartCartDrawer({
                   type="submit"
                   form="checkout-form"
                   disabled={isProcessing}
-                  className="flex-1 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-3 rounded-[30px] bg-[#563C49] hover:bg-[#9F8291] text-white font-medium text-sm transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Lock className="w-4 h-4" />
                   {isProcessing
-                    ? "ETGB & 3D Secure Doğrulanıyor..."
-                    : `${paymentProvider} ile ${pricing.totalTry.toLocaleString("tr-TR")} ₺ Öde`}
+                    ? "İşleniyor..."
+                    : `${formatTL(pricing.totalTry)} Öde`}
                 </button>
               </div>
             )}

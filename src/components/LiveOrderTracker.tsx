@@ -24,7 +24,6 @@ interface LiveOrderTrackerProps {
   orders: OrderRecord[];
   selectedOrder: OrderRecord;
   onSelectOrder: (order: OrderRecord) => void;
-  onSimulateStageChange?: (orderNumber: string, stage: OrderStageStatus) => void;
 }
 
 const STAGE_ICONS: Record<OrderStageStatus, React.ReactNode> = {
@@ -41,7 +40,6 @@ export default function LiveOrderTracker({
   orders,
   selectedOrder,
   onSelectOrder,
-  onSimulateStageChange,
 }: LiveOrderTrackerProps) {
   const [query, setQuery] = useState(selectedOrder.orderNumber);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -79,7 +77,7 @@ export default function LiveOrderTracker({
             Siparişinizin Avrupa&apos;dan Kapınıza Yolculuğu
           </h2>
           <p className="text-sm text-[#563C49]/70 mt-1">
-            Avrupa mağaza tedariğinden uçuşa ve Türkiye dağıtım merkezine kadar siparişinizin hangi aşamada olduğunu anlık takip edin.
+            Sipariş numaranızla paketinizin Avrupa mağaza tedariğinden Türkiye dağıtım merkezine kadar hangi aşamada olduğunu anlık izleyin.
           </p>
         </div>
 
@@ -105,7 +103,7 @@ export default function LiveOrderTracker({
 
       {/* Örnek Sipariş Seçici */}
       <div className="flex flex-wrap items-center gap-2 py-4 border-b border-[#563C49]/10">
-        <span className="text-xs text-[#563C49]/60 mr-1">Örnek Siparişler:</span>
+        <span className="text-xs text-[#563C49]/60 mr-1">Takip Edilen Sipariş:</span>
         {orders.map((ord) => {
           const active = ord.orderNumber === selectedOrder.orderNumber;
           return (
@@ -135,14 +133,17 @@ export default function LiveOrderTracker({
         </div>
       )}
 
-      {/* Aşama İlerleme Çubuğu (7 Aşama) */}
+      {/* Aşama İlerleme Çubuğu (Salt-Okunur Görsel Akış) */}
       <div className="py-8 border-b border-[#563C49]/10">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-medium text-[#563C49]/70">
-            Mevcut Durum: <strong className="text-[#563C49]">{ORDER_STAGE_META[currentStageIndex]?.shortLabel}</strong>
+            Güncel Aşama:{" "}
+            <strong className="text-[#563C49]">
+              0{currentStageIndex + 1} / 07 — {ORDER_STAGE_META[currentStageIndex]?.shortLabel}
+            </strong>
           </span>
-          <span className="text-xs text-[#563C49]/55">
-            (Aşamaları test etmek için kutulara tıklayabilirsiniz)
+          <span className="text-xs text-[#438E44] font-medium">
+            ✓ ADEN Operasyon Ekibi Tarafından Canlı Güncellenir
           </span>
         </div>
 
@@ -152,18 +153,14 @@ export default function LiveOrderTracker({
             const isCurrent = index === currentStageIndex;
 
             return (
-              <button
+              <div
                 key={meta.stage}
-                type="button"
-                onClick={() =>
-                  onSimulateStageChange?.(selectedOrder.orderNumber, meta.stage)
-                }
-                className={`text-left p-3.5 rounded-[16px] border transition cursor-pointer ${
+                className={`text-left p-3.5 rounded-[16px] border transition ${
                   isCurrent
                     ? "bg-[#563C49] text-white border-[#563C49] shadow-md"
                     : isPast
                     ? "bg-[#F9F8F6] text-[#563C49] border-[#563C49]/20"
-                    : "bg-white text-[#563C49]/50 border-[#563C49]/10 hover:border-[#563C49]/30"
+                    : "bg-white text-[#563C49]/45 border-[#563C49]/10"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -173,7 +170,7 @@ export default function LiveOrderTracker({
                         ? "bg-white/20 text-white"
                         : isPast
                         ? "bg-[#438E44]/15 text-[#438E44]"
-                        : "bg-[#563C49]/[0.06] text-[#563C49]/50"
+                        : "bg-[#563C49]/[0.06] text-[#563C49]/45"
                     }`}
                   >
                     {isPast ? <CheckCircle2 className="w-4 h-4" /> : STAGE_ICONS[meta.stage]}
@@ -190,7 +187,7 @@ export default function LiveOrderTracker({
                 >
                   {meta.hubTag}
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>

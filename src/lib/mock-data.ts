@@ -59,6 +59,33 @@ export interface Product {
   variants: ProductVariant[];
 }
 
+export interface SocialReelItem {
+  id: string;
+  title: string;
+  creatorHandle: string;
+  platform: "INSTAGRAM" | "TIKTOK";
+  viewsText: string;
+  videoUrl: string;
+  posterImage: string;
+  linkedProductSlug: string;
+}
+
+export interface PaymentSettingsConfig {
+  iyzicoEnabled: boolean;
+  iyzicoApiKey: string;
+  iyzicoSecretKey: string;
+  paytrEnabled: boolean;
+  paytrMerchantId: string;
+  googlePayEnabled: boolean;
+  applePayEnabled: boolean;
+  bankTransferEnabled: boolean;
+  bankIban: string;
+  bankAccountName: string;
+  whatsappOrderEnabled: boolean;
+  whatsappNumber: string;
+  installmentBannerText: string;
+}
+
 export interface TrackingStageLog {
   stage: OrderStageStatus;
   title: string;
@@ -118,6 +145,69 @@ export interface CustomSourcingRequestItem {
   status: "TEKLİF HAZIRLANIYOR" | "MÜŞTERİ ONAYINDA" | "AVRUPA DEPO TEDARİĞİNDE";
 }
 
+export const INITIAL_PAYMENT_SETTINGS: PaymentSettingsConfig = {
+  iyzicoEnabled: true,
+  iyzicoApiKey: "sandbox-iyzico-aden-2026-key",
+  iyzicoSecretKey: "sandbox-iyzico-secret-9941",
+  paytrEnabled: true,
+  paytrMerchantId: "481920",
+  googlePayEnabled: true,
+  applePayEnabled: true,
+  bankTransferEnabled: true,
+  bankIban: "TR42 0006 4000 0011 2345 6789 00",
+  bankAccountName: "ADEN GLOBAL KOZMETİK VE LOJİSTİK A.Ş.",
+  whatsappOrderEnabled: false,
+  whatsappNumber: "+905320000000",
+  installmentBannerText: "Tüm kredi kartlarına vade farksız 3 taksit imkanı",
+};
+
+export const INITIAL_SOCIAL_REELS: SocialReelItem[] = [
+  {
+    id: "reel-1",
+    title: "24 Çekmeceli Armani Advent Calendar Kutu Açılımı ✨",
+    creatorHandle: "@aden.global",
+    platform: "INSTAGRAM",
+    viewsText: "184B İzlenme",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-woman-applying-makeup-in-front-of-a-mirror-39773-large.mp4",
+    posterImage:
+      "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=85",
+    linkedProductSlug: "armani-advent-calendar-2",
+  },
+  {
+    id: "reel-2",
+    title: "Londra'dan Gelen Dev Space NK 2026 Takvimi! 🇬🇧",
+    creatorHandle: "@aden.global",
+    platform: "TIKTOK",
+    viewsText: "312B İzlenme",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-putting-on-lip-gloss-close-up-39778-large.mp4",
+    posterImage:
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=85",
+    linkedProductSlug: "space-nk-beauty-advent-calendar",
+  },
+  {
+    id: "reel-3",
+    title: "Hailey Bieber Rhode Peptide Lip Tint & Blush Deniyoruz 🍓",
+    creatorHandle: "@aden.global",
+    platform: "INSTAGRAM",
+    viewsText: "420B İzlenme",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-girl-applying-blush-on-her-cheeks-39770-large.mp4",
+    posterImage:
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=85",
+    linkedProductSlug: "rhode-peptide-lip-tint-pocket-blush-set",
+  },
+  {
+    id: "reel-4",
+    title: "Patrick Ta Major Headlines Krem + Toz Allık Sırları 💗",
+    creatorHandle: "@aden.global",
+    platform: "TIKTOK",
+    viewsText: "156B İzlenme",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-close-up-of-cosmetic-brushes-and-powder-39765-large.mp4",
+    posterImage:
+      "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=800&q=85",
+    linkedProductSlug: "patrick-ta-major-headlines-double-take-blush",
+  },
+];
+
 export const ORDER_STAGE_META: {
   stage: OrderStageStatus;
   stepNumber: number;
@@ -168,7 +258,6 @@ export const ORDER_STAGE_META: {
   },
 ];
 
-// Format price exactly like avrupadankargom.com: "35,000TL"
 export function formatTL(amount: number): string {
   return `${amount.toLocaleString("en-US")}TL`;
 }
@@ -177,7 +266,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-armani-01",
     slug: "armani-advent-calendar-2",
-    sku: "AVK-ARM-2026",
+    sku: "ADN-ARM-2026",
     name: "Armani Advent Calendar",
     brand: "Armani",
     category: "Advent Takvimi",
@@ -201,10 +290,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     description:
       "Giorgio Armani Beauty'nin ikonik kırmızı ve gümüş detaylı lüks yılbaşı takvimi. İçerisinde Sì Eau de Parfum, Lip Power rujlar, Luminous Silk aydınlatıcılar ve Eyes to Kill maskara dahil 24 adet tam boy ve seyahat boyu ikonik Armani güzellik sırrı yer alır.",
     deliveryNotes: [
-      "*Ürün siparişiniz üzerine Avrupa resmi mağazasından tedarik edilecektir.",
-      "*Markanın gönderimine bağlı olarak teslimat süresi değişkenlik göstermektedir (Ortalama 7-12 iş günü).",
-      "*Gümrük ve kargo süreçlerinin tamamı fiyata dahildir, kapıda ek ücret çıkmaz.",
-      "*Detaylı bilgi için bizimle iletişime geçebilirsiniz.",
+      "*Ürün siparişiniz üzerine tedarik edilecektir.",
+      "*Markanın gönderimine bağlı olarak teslimat süresi değişkenlik göstermektedir.",
+      "*Detaylı bilgi için iletişime geçiniz.",
     ],
     contentsList: [
       "Sì Eau de Parfum (Tam Boy & Mini Boy)",
@@ -235,7 +323,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-spacenk-02",
     slug: "space-nk-beauty-advent-calendar",
-    sku: "AVK-SNK-2026",
+    sku: "ADN-SNK-2026",
     name: "Space NK Beauty Advent Calendar",
     brand: "Space NK",
     category: "Advent Takvimi",
@@ -260,7 +348,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     description:
       "Londra'nın en prestijli güzellik takvimi Space NK Beauty Advent Calendar. Rare Beauty, Charlotte Tilbury, Summer Fridays, Augustinus Bader ve Olaplex dahil 35 adet ikonik ürünü tek bir koleksiyon kutusunda sunar.",
     deliveryNotes: [
-      "*Ürün siparişiniz üzerine Londra Space NK mağazasından tedarik edilecektir.",
+      "*Ürün siparişiniz üzerine tedarik edilecektir.",
       "*Markanın gönderimine bağlı olarak teslimat süresi değişkenlik göstermektedir.",
       "*Detaylı bilgi için iletişime geçiniz.",
     ],
@@ -290,7 +378,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-rituals-03",
     slug: "rituals-premium-advent-calendar",
-    sku: "AVK-RIT-2026",
+    sku: "ADN-RIT-2026",
     name: "Rituals Premium Advent Calendar",
     brand: "Rituals",
     category: "Advent Takvimi",
@@ -337,7 +425,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-liberty-04",
     slug: "liberty-london-beauty-advent-calendar",
-    sku: "AVK-LIB-2026",
+    sku: "ADN-LIB-2026",
     name: "Liberty London Beauty Advent Calendar",
     brand: "Liberty London",
     category: "Advent Takvimi",
@@ -380,7 +468,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-mancera-05",
     slug: "mancera-instant-crush-edp",
-    sku: "AVK-MNC-120",
+    sku: "ADN-MNC-120",
     name: "Mancera Instant Crush Eau de Parfum",
     brand: "Mancera",
     category: "Parfüm",
@@ -418,7 +506,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-rhode-06",
     slug: "rhode-peptide-lip-tint-pocket-blush-set",
-    sku: "AVK-RHD-402",
+    sku: "ADN-RHD-402",
     name: "Rhode Peptide Lip Tint & Pocket Blush Duo",
     brand: "Rhode",
     category: "Hemen Teslim",
@@ -479,7 +567,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-patrickta-07",
     slug: "patrick-ta-major-headlines-double-take-blush",
-    sku: "AVK-PTA-109",
+    sku: "ADN-PTA-109",
     name: "Patrick Ta Major Headlines Crème & Powder Blush Duo",
     brand: "Patrick Ta",
     category: "Makyaj",
@@ -531,7 +619,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prd-sheglam-08",
     slug: "sheglam-full-collection-advent-box",
-    sku: "AVK-SHG-772",
+    sku: "ADN-SHG-772",
     name: "Sheglam Harry Potter & Glamour Vault Set",
     brand: "Sheglam",
     category: "Setler",
@@ -900,7 +988,6 @@ export const INITIAL_CUSTOM_REQUESTS: CustomSourcingRequestItem[] = [
   },
 ];
 
-// 5000₺ ve üzeri ücretsiz kargo + Her şey dahil net fiyat hesaplama
 export function calculateTransparentPricing(subtotalTry: number) {
   if (subtotalTry <= 0) {
     return {
@@ -914,7 +1001,6 @@ export function calculateTransparentPricing(subtotalTry: number) {
   }
   const freeShippingUnlocked = subtotalTry >= 5000;
   const euLogisticsFeeTry = freeShippingUnlocked ? 0 : 250;
-  // Ürün fiyatlarına gümrük dahildir, bilgilendirme amaçlı 0 ek ücret gösterilir
   const customsTaxTry = 0;
   const vipInsuranceTry = 0;
 

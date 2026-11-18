@@ -1,17 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #563C49;
-  --color-plum: #563C49;
-  --color-plum-muted: #9F8291;
-  --color-cream: #F9F8F6;
-  --color-plum-tint: rgba(86, 60, 73, 0.06);
-  --color-plum-border: rgba(86, 60, 73, 0.08);
+  --background: #FFF9FA;
+  --foreground: #3B1E28;
 }
 
 body {
-  background: #ffffff;
-  color: #563C49;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background: #FFF9FA;
+  color: #3B1E28;
+}
+
+.font-serif-editorial {
+  font-family: var(--font-serif), Georgia, serif;
 }

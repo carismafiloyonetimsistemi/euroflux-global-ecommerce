@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   ShoppingBag,
   Search,
@@ -55,6 +55,27 @@ export default function AdenBeautyPlatform() {
   const [activeProduct, setActiveProduct] = useState<Product>(INITIAL_PRODUCTS[0]);
   const [pdpQuantity, setPdpQuantity] = useState<number>(1);
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
+
+  // URL üzerinden /admin veya /?view=admin veya /products/:slug ile doğrudan erişim
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const params = new URLSearchParams(window.location.search);
+      if (path === "/admin" || params.get("view") === "admin" || window.location.hash === "#admin") {
+        setActiveView("ADMIN");
+      } else if (params.get("view") === "tracking") {
+        setActiveView("ORDER_TRACKING");
+      }
+      const slugParam = params.get("product") || (path.startsWith("/products/") ? path.replace("/products/", "") : null);
+      if (slugParam) {
+        const found = INITIAL_PRODUCTS.find((p) => p.slug === slugParam);
+        if (found) {
+          setActiveProduct(found);
+          setActiveView("PRODUCT_DETAIL");
+        }
+      }
+    }
+  }, []);
 
   // Ana Sayfa Sekmeli Ürün Karuseli ("Yeni Gelenler", "Hemen Teslim Ürünler", "Çok Satanlar")
   const [homeCarouselTab, setHomeCarouselTab] = useState<

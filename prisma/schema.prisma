@@ -1,0 +1,166 @@
+// ============================================================================
+// PRISMA & POSTGRESQL VERİTABANI ŞEMASI (EUROFLUX GLOBAL E-TİCARET MİMARİSİ)
+// ============================================================================
+// Bu şema; Avrupa/Amerika özel tedarik, canlı gümrük & uçuş logları,
+// orijinallik sertifikasyonu (Batch Code), İyzico/PayTR ödeme entegrasyonu
+// ve şeffaf gümrük/vergi kırılımı için tasarlanmıştır.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  LOGISTICS_OPERATOR
+  CUSTOMS_AGENT
+}
+
+enum SupplyStatus {
+  EXPRESS_READY_EU     // Avrupa (Berlin/Paris) deposunda hazır - 3-5 günde teslim
+  BOUTIQUE_PREORDER    // Resmi mağazadan (Sephora EU / Space NK) siparişe özel tedarik - 7-12 gün
+  LIMITED_DROP         // Sınırlı sayıda koleksiyon / Advent Calendar
+}
+
+enum OrderStageStatus {
+  ORDER_CONFIRMED      // 1. Sipariş & Ödeme Onaylandı (Faturalandırıldı)
+  EU_WAREHOUSE         // 2. Avrupa Lojistik Merkezinde (Kalite Kontrol & Batch Doğrulama)
+  EXPORT_CUSTOMS       // 3. Avrupa İhracat & Gümrük Çıkış İşlemleri
+  IN_FLIGHT_TRANSIT    // 4. Uçuşta / Uluslararası Hava Kargo Transit (Lufthansa / Turkish Cargo)
+  TR_CUSTOMS_HUB       // 5. Türkiye Gümrük & İstanbul Transfer Merkezi
+  OUT_FOR_DELIVERY     // 6. Yurtiçi VIP Kuryede (Dağıtımda)
+  DELIVERED            // 7. Teslim Edildi
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  fullName      String
+  phone         String?
+  tcIdentityNo  String?   // Gümrük beyannamesi (ETGB) için zorunlu T.C. Kimlik No
+  role          UserRole  @default(CUSTOMER)
+  loyaltyPoints Int       @default(0)
+  addresses     Address[]
+  orders        Order[]
+  customRequests CustomSourcingRequest[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Address {
+  id           String  @id @default(cuid())
+  userId       String
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String  // Ev, İş vb.
+  city         String
+  district     String
+  fullAddress  String
+  postalCode   String
+  isDefault    Boolean @default(false)
+}
+
+model Product {
+  id                  String           @id @default(cuid())
+  slug                String           @unique
+  sku                 String           @unique
+  name                String
+  brand               String
+  category            String
+  originCountry       String           // Fransa, İngiltere, Almanya, ABD
+  originCity          String           // Paris, Londra, Berlin, New York
+  sourceStore         String           // Sephora Champs-Élysées, Space NK London, KaDeWe Berlin
+  supplyStatus        SupplyStatus     @default(EXPRESS_READY_EU)
+  estimatedDelivery   String           // "4-6 İş Günü"
+  basePriceEur        Decimal          @db.Decimal(10, 2)
+  priceTry            Decimal          @db.Decimal(10, 2)
+  customsIncluded     Boolean          @default(true) // %100 Gümrük & Vergi Garantisi
+  authenticityBatch   String           // Örn: "BATCH-2026-FR992"
+  description         String
+  ingredients         String?
+  rating              Float            @default(4.9)
+  reviewCount         Int              @default(0)
+  stockCount          Int              @default(15)
+  images              String[]
+  variants            ProductVariant[]
+  orderItems          OrderItem[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+}
+
+model ProductVariant {
+  id          String  @id @default(cuid())
+  productId   String
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type        String  // "Renk", "Boyut", "Ton"
+  name        String  // "Toast", "50ml", "Rose Glow"
+  hexColor    String? // "#9E5B40"
+  priceDiff   Decimal @default(0) @db.Decimal(10, 2)
+  stockCount  Int     @default(10)
+}
+
+model Order {
+  id                  String              @id @default(cuid())
+  orderNumber         String              @unique // Örn: "EU-90482"
+  userId              String
+  user                User                @relation(fields: [userId], references: [id])
+  currentStage        OrderStageStatus    @default(EU_WAREHOUSE)
+  subtotalTry         Decimal             @db.Decimal(10, 2)
+  euLogisticsFeeTry   Decimal             @db.Decimal(10, 2)
+  customsDutyTaxTry   Decimal             @db.Decimal(10, 2) // Şeffaf ETGB Gümrük Vergisi Kalemi
+  cargoInsuranceTry   Decimal             @db.Decimal(10, 2)
+  totalAmountTry      Decimal             @db.Decimal(10, 2)
+  paymentProvider     String              // "IYZICO" | "PAYTR"
+  paymentTransactionId String?
+  etgbDeclarationNo   String?             // Elektronik Ticaret Gümrük Beyannamesi No
+  airWaybillNo        String?             // AWB Uçuş Konşimento No (Örn: LH-849201)
+  batchReceiptImage   String?             // Müşteriye sunulan Avrupa mağaza fişi & ürün kontrol fotoğrafı
+  guaranteedDelivery  DateTime            // SLA Teslimat Garantisi Tarihi
+  items               OrderItem[]
+  trackingTimeline    OrderTrackingLog[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+model OrderItem {
+  id              String  @id @default(cuid())
+  orderId         String
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product @relation(fields: [productId], references: [id])
+  variantName     String?
+  quantity        Int
+  unitPriceTry    Decimal @db.Decimal(10, 2)
+  verifiedBatchNo String? // Depo çıkışında okutulan orijinallik barkodu
+}
+
+model OrderTrackingLog {
+  id             String           @id @default(cuid())
+  orderId        String
+  order          Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  stage          OrderStageStatus
+  title          String           // Örn: "Berlin Lojistik Merkezinde Kalite & Orijinallik Kontrolü"
+  description    String           // Örn: "Ürününüz Sephora FR faturası ve Batch kodu (FR-992A) ile doğrulandı."
+  location       String           // Örn: "Berlin Brandenburg Hub, Almanya"
+  operatorName   String?          // Örn: "Lojistik Uzmanı: Lukas M."
+  telemetryMeta  Json?            // Uçuş kodu, gümrük memuru onayı, sıcaklık sensörü vb.
+  isCompleted    Boolean          @default(true)
+  timestamp      DateTime         @default(now())
+}
+
+model CustomSourcingRequest {
+  id             String   @id @default(cuid())
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id])
+  productUrl     String   // Müşterinin Avrupa'dan istediği ürün linki
+  brandAndName   String
+  targetCountry  String   // "Fransa", "İngiltere", "Almanya", "ABD"
+  notes          String?
+  quotedPriceTry Decimal? @db.Decimal(10, 2)
+  status         String   @default("PENDING_QUOTE") // PENDING_QUOTE, QUOTED, APPROVED, ORDERED
+  createdAt      DateTime @default(now())
+}

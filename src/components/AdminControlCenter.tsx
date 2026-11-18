@@ -232,7 +232,7 @@ export default function AdminControlCenter({
             <div className="flex items-center justify-between border-b border-[#563C49]/15 pb-3">
               <div>
                 <div className="text-xs uppercase tracking-wider text-[#563C49]/70">
-                  AVRUPADAN KARGOM • ULUSLARARASI TRANSFER
+                  ADEN GLOBAL • ULUSLARARASI TRANSFER
                 </div>
                 <div className="text-lg font-medium">
                   #{printedLabelOrder.orderNumber}

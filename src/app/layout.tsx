@@ -9,9 +9,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Avrupadan Kargom | Dünyadan Güzellik Keşifleri & Advent Takvimleri",
+  title: "ADEN | Dünyadan Güzellik Keşifleri & Advent Takvimleri",
   description:
-    "Armani Advent Calendar, Space NK, Charlotte Tilbury, Rhode, Patrick Ta ve dünyaca ünlü kozmetik markaları güvenli ödeme ve şeffaf kargo takibiyle kapınızda.",
+    "ADEN ile Armani Advent Calendar, Space NK, Charlotte Tilbury, Rhode, Patrick Ta ve dünyaca ünlü kozmetik markaları güvenli ödeme ve şeffaf kargo takibiyle kapınızda.",
 };
 
 export default function RootLayout({

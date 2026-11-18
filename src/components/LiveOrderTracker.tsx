@@ -61,7 +61,7 @@ export default function LiveOrderTracker({
       setSearchError(null);
     } else {
       setSearchError(
-        `"${query}" numaralı sipariş bulunamadı. Örnek kodlar: AVK-90482 veya AVK-88310`
+        `"${query}" numaralı sipariş bulunamadı. Örnek kodlar: ADN-90482 veya ADN-88310`
       );
     }
   };
@@ -90,7 +90,7 @@ export default function LiveOrderTracker({
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Sipariş No (Örn: AVK-90482)"
+              placeholder="Sipariş No (Örn: ADN-90482)"
               className="w-full pl-11 pr-4 py-3 rounded-[30px] bg-[#F9F8F6] border border-[#563C49]/15 text-sm text-[#563C49] placeholder:text-[#563C49]/45 focus:outline-none focus:border-[#563C49]"
             />
           </div>

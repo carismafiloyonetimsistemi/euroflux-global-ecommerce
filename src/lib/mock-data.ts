@@ -662,7 +662,7 @@ export const CUSTOMER_REVIEWS = [
 export const INITIAL_ORDERS: OrderRecord[] = [
   {
     id: "ord-1",
-    orderNumber: "AVK-90482",
+    orderNumber: "ADN-90482",
     customerName: "Ceren Bulut",
     customerEmail: "ceren.bulut@example.com",
     customerPhone: "+90 532 418 92 10",
@@ -705,7 +705,7 @@ export const INITIAL_ORDERS: OrderRecord[] = [
           "Siparişiniz onaylandı ve ek gümrük vergisi çıkmaması adına tüm ithalat işlemleri tarafımızca üstlenildi.",
         location: "Paris, Fransa",
         timestamp: "15 Kasım 2026 • 14:20",
-        operatorName: "Avrupadan Kargom Tedarik Ekibi",
+        operatorName: "ADEN Global Tedarik Ekibi",
         badgeCode: "ONAYLANDI",
       },
       {
@@ -776,7 +776,7 @@ export const INITIAL_ORDERS: OrderRecord[] = [
   },
   {
     id: "ord-2",
-    orderNumber: "AVK-88310",
+    orderNumber: "ADN-88310",
     customerName: "Zeynep Kaya",
     customerEmail: "zeynep.kaya@example.com",
     customerPhone: "+90 544 812 33 19",

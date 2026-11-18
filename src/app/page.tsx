@@ -38,7 +38,7 @@ import LiveOrderTracker from "@/components/LiveOrderTracker";
 import SmartCartDrawer, { CartItem } from "@/components/SmartCartDrawer";
 import AdminControlCenter from "@/components/AdminControlCenter";
 
-export default function AvrupadanKargomPlatform() {
+export default function AdenBeautyPlatform() {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [orders, setOrders] = useState<OrderRecord[]>(INITIAL_ORDERS);
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord>(INITIAL_ORDERS[0]);
@@ -229,7 +229,7 @@ export default function AvrupadanKargomPlatform() {
       {/* 2. FLOATING PILL HEADER (Yuvarlak Beyaz Hap Tasarımı) */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md py-3.5 px-4 sm:px-8 lg:px-12 border-b border-[#563C49]/[0.08]">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
-          {/* Sol Logo: AVRUPADAN KARGOM */}
+          {/* Sol Logo: ADEN */}
           <button
             type="button"
             onClick={() => {
@@ -239,15 +239,15 @@ export default function AvrupadanKargomPlatform() {
             }}
             className="flex items-center gap-2.5 text-left cursor-pointer shrink-0"
           >
-            <div className="w-10 h-10 rounded-full bg-[#563C49]/[0.06] flex items-center justify-center text-[#563C49]">
-              <ShoppingBag className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full bg-[#563C49] flex items-center justify-center text-white font-semibold text-base tracking-wider">
+              A
             </div>
             <div className="leading-none">
-              <span className="block text-[15px] font-bold tracking-tight text-[#563C49]">
-                AVRUPADAN
+              <span className="block text-[20px] font-bold tracking-[0.18em] text-[#563C49]">
+                ADEN
               </span>
-              <span className="block text-[13px] font-medium tracking-widest text-[#9F8291]">
-                KARGOM
+              <span className="block text-[10px] font-medium tracking-[0.22em] text-[#9F8291] uppercase mt-0.5">
+                GLOBAL BEAUTY
               </span>
             </div>
           </button>
@@ -313,9 +313,21 @@ export default function AvrupadanKargomPlatform() {
             >
               Sipariş Takibi
             </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveView("ADMIN")}
+              className={`px-3.5 py-1.5 rounded-[30px] text-xs font-medium transition cursor-pointer ${
+                activeView === "ADMIN"
+                  ? "bg-[#563C49] text-white"
+                  : "border border-[#563C49]/25 text-[#563C49] hover:bg-[#563C49]/[0.06]"
+              }`}
+            >
+              Admin Paneli
+            </button>
           </nav>
 
-          {/* Sağ İkonlar: Arama, Hesap/Yönetim, Sepet */}
+          {/* Sağ İkonlar: Arama, Admin Butonu, Sepet */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               type="button"
@@ -328,15 +340,16 @@ export default function AvrupadanKargomPlatform() {
 
             <button
               type="button"
-              onClick={() =>
-                setActiveView(
-                  activeView === "ORDER_TRACKING" ? "ADMIN" : "ORDER_TRACKING"
-                )
-              }
-              title="Sipariş Takibi & Yönetim"
-              className="w-10 h-10 rounded-full hover:bg-[#563C49]/[0.06] flex items-center justify-center text-[#563C49] transition cursor-pointer"
+              onClick={() => setActiveView("ADMIN")}
+              title="Admin Yönetim Paneli"
+              className={`px-3.5 h-10 rounded-[30px] flex items-center gap-1.5 text-xs font-medium transition cursor-pointer ${
+                activeView === "ADMIN"
+                  ? "bg-[#563C49] text-white"
+                  : "bg-[#563C49]/[0.06] hover:bg-[#563C49]/12 text-[#563C49]"
+              }`}
             >
-              <User className="w-5 h-5" />
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline">Admin</span>
             </button>
 
             <button
@@ -1262,7 +1275,7 @@ export default function AvrupadanKargomPlatform() {
           </div>
 
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/70">
-            <div>© 2026, Avrupadan Kargom</div>
+            <div>© 2026, ADEN Global Beauty. Tüm hakları saklıdır.</div>
             <div className="flex flex-wrap items-center gap-2">
               {["Visa", "Mastercard", "Apple Pay", "Google Pay", "Amex"].map(
                 (pm) => (

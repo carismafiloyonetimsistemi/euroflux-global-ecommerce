@@ -86,7 +86,7 @@ export default function SmartCartDrawer({
 
       const newOrder: OrderRecord = {
         id: `ord-${Date.now()}`,
-        orderNumber: data.orderNumber ? data.orderNumber.replace("EU-", "AVK-") : `AVK-${Math.floor(10000 + Math.random() * 89999)}`,
+        orderNumber: data.orderNumber ? data.orderNumber.replace("EU-", "ADN-") : `ADN-${Math.floor(10000 + Math.random() * 89999)}`,
         customerName: fullName,
         customerEmail: email,
         customerPhone: phone,
@@ -125,7 +125,7 @@ export default function SmartCartDrawer({
             description: "Siparişiniz alındı ve Avrupa tedarik ekibimize iletildi.",
             location: city,
             timestamp: "Şimdi",
-            operatorName: "Avrupadan Kargom",
+            operatorName: "ADEN Global",
             badgeCode: "ONAYLANDI",
           },
           {
